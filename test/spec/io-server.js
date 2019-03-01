@@ -16,6 +16,7 @@ async function shouldThrowNoManager(fn) {
 describe('io server', function () {
     it('should throw when adding manager', async function() {
         const io = require('socket.io')(3030);
+        const IoApi = require('../../lib/client/IoApi');
 
         const quotaServer = new quota.Server();
         quotaServer.addManager('ga', {
@@ -24,15 +25,13 @@ describe('io server', function () {
         });
         quotaServer.attachIo(io);
 
-        const quotaClient = new quota.Client('http://localhost:3030');
-        const server = await quotaClient._findServerForManager('ga');
+        const ioApi = new IoApi({ uri: 'http://localhost:3030' });
+        const quotaClient = new quota.Client(ioApi);
 
         try {
-            await server.addManager('google-analytics');
+            await ioApi.addManager('google-analytics');
             throw new Error('expected Error');
-        } catch(e) {
-
-        }
+        } catch(e) {}
 
         quotaClient.dispose();
         io.close();

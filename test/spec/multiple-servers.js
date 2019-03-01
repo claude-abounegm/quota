@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const quota = require('../../lib/index.js');
+const quota = require('../../lib');
 
 const {
     expect
