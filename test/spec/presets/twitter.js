@@ -20,32 +20,50 @@ describe('Preset Twitter', function () {
             'twitter': {}
         });
 
-        // const quotaClient = new quota.Client(quotaServer);
-        // return Promise.all([
-        //     quotaClient.requestQuota('twitter', { userId: 1 }, { 'account/settings': 15 }, { maxWait: 0 }),
-        //     quotaClient.requestQuota('twitter', { userId: 1 }, { 'account/settings': 15 }, { maxWait: 0 })
-        //         .then(function () {
-        //             throw new Error('Expected OutOfQuotaError');
-        //         })
-        //         .catch(function (err) {
-        //             return; // Expected
-        //         }),
-        //     quotaClient.requestQuota('twitter', { userId: 2 }, { 'account/settings': 15 }, { maxWait: 0 }),
-        //     quotaClient.requestQuota('twitter', { userId: 2 }, { 'account/settings': 15 }, { maxWait: 0 })
-        //         .then(function () {
-        //             throw new Error('Expected OutOfQuotaError');
-        //         })
-        //         .catch(function (err) {
-        //             return; // Expected
-        //         }),
-        //     quotaClient.requestQuota('twitter', { userId: 1 }, { 'account/verify_credentials': 15 }, { maxWait: 0 }),
-        //     quotaClient.requestQuota('twitter', { userId: 1 }, { 'account/verify_credentials': 15 }, { maxWait: 0 })
-        //         .then(function () {
-        //             throw new Error('Expected OutOfQuotaError');
-        //         })
-        //         .catch(function (err) {
-        //             return; // Expected
-        //         })
-        // ]);
+        const quotaClient = new quota.Client(quotaServer);
+        return Promise.all([
+            quotaClient.requestQuota('twitter', {
+                userId: 1
+            }, {
+                'account/settings': 15
+            }, {
+                maxWait: 0
+            }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
+                userId: 1
+            }, {
+                'account/settings': 15
+            }, {
+                maxWait: 0
+            })),
+            quotaClient.requestQuota('twitter', {
+                userId: 2
+            }, {
+                'account/settings': 15
+            }, {
+                maxWait: 0
+            }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
+                userId: 2
+            }, {
+                'account/settings': 15
+            }, {
+                maxWait: 0
+            })),
+            quotaClient.requestQuota('twitter', {
+                userId: 1
+            }, {
+                'account/verify_credentials': 15
+            }, {
+                maxWait: 0
+            }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
+                userId: 1
+            }, {
+                'account/verify_credentials': 15
+            }, {
+                maxWait: 0
+            }))
+        ]);
     });
 });

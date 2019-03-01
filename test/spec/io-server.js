@@ -1,6 +1,7 @@
 'use strict';
 
 const quota = require('../../lib');
+const IoApi = require('../../lib/client/IoApi');
 
 async function shouldThrowNoManager(fn) {
     try {
@@ -14,9 +15,8 @@ async function shouldThrowNoManager(fn) {
 }
 
 describe('io server', function () {
-    it('should throw when adding manager', async function() {
+    it('should throw when adding manager', async function () {
         const io = require('socket.io')(3030);
-        const IoApi = require('../../lib/client/IoApi');
 
         const quotaServer = new quota.Server();
         quotaServer.addManager('ga', {
@@ -25,13 +25,15 @@ describe('io server', function () {
         });
         quotaServer.attachIo(io);
 
-        const ioApi = new IoApi({ uri: 'http://localhost:3030' });
+        const ioApi = new IoApi({
+            uri: 'http://localhost:3030'
+        });
         const quotaClient = new quota.Client(ioApi);
 
         try {
             await ioApi.addManager('google-analytics');
             throw new Error('expected Error');
-        } catch(e) {}
+        } catch (e) {}
 
         quotaClient.dispose();
         io.close();
@@ -70,7 +72,6 @@ describe('io server', function () {
 
     it('should throw an OutOfQuotaError', async function () {
         const io = require('socket.io')(3030);
-        const quota = require('../../lib');
 
         const quotaServer = new quota.Server();
         quotaServer.addManager('ga', {
@@ -111,7 +112,6 @@ describe('io server', function () {
 
     it('should throw a NoManagerError', async function () {
         const io = require('socket.io')(3030);
-        const quota = require('../../lib');
 
         const quotaServer = new quota.Server({
             'test': new quota.Manager({
@@ -127,6 +127,40 @@ describe('io server', function () {
         await shouldThrowNoManager(() => quotaClient.requestQuota('unknown'));
 
         quotaClient.dispose();
+        io.close();
+    });
+
+    it('should throw a NoManagerError', async function () {
+        const io = require('socket.io')(3030);
+        const {
+            errorToIo
+        } = require('../../lib/common/utils');
+
+        const errorMessage = 'quota.testError error';
+        io.on('connection', socket => {
+            socket.on('quota.testError', cb => {
+                const error = new Error(errorMessage);
+                error.field1 = "field1";
+                cb(errorToIo(error));
+            });
+        })
+
+        const ioApi = new IoApi({
+            uri: 'http://localhost:3030'
+        });
+        try {
+            await ioApi._request('quota.testError', () => {});
+        } catch (e) {
+            if (e.field1 !== 'field1') {
+                throw new Error("e.field1 !== 'field1'");
+            }
+
+            if (e.message !== errorMessage) {
+                throw new Error("e.message !== errorMessage");
+            }
+        }
+
+        ioApi.dispose();
         io.close();
     });
 });

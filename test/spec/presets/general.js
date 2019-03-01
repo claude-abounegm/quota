@@ -28,10 +28,26 @@ describe('Loading presets', function () {
         const quotaClient = new quota.Client(quotaServer);
 
         return Promise.all([
-            quotaClient.requestQuota('bitly1', {}, { requests:5 }, { maxWait: 0 }),
-            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly1', {}, { requests:5 }, { maxWait: 0 })),
-            quotaClient.requestQuota('bitly2', {}, { requests:5 }, { maxWait: 0 }),
-            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly2', {}, { requests:5 }, { maxWait: 0 }))
+            quotaClient.requestQuota('bitly1', {}, {
+                requests: 5
+            }, {
+                maxWait: 0
+            }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly1', {}, {
+                requests: 5
+            }, {
+                maxWait: 0
+            })),
+            quotaClient.requestQuota('bitly2', {}, {
+                requests: 5
+            }, {
+                maxWait: 0
+            }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly2', {}, {
+                requests: 5
+            }, {
+                maxWait: 0
+            }))
         ]);
     });
 });
