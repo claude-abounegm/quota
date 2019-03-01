@@ -1,6 +1,6 @@
 'use strict';
 
-const quota = require('../../../lib/index.js');
+const quota = require('../../../lib');
 const _ = require('lodash');
 
 describe('Preset Facebook', function () {

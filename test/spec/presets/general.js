@@ -1,43 +1,37 @@
 'use strict';
 
-var quota = require('../../../lib/index.js');
+const quota = require('../../../lib');
+const _ = require('lodash');
 
-var _ = require('lodash');
-
+async function shouldThrowOutOfQuota(fn) {
+    try {
+        await fn();
+        throw new Error('Expected OutOfQuotaError');
+    } catch (e) {
+        if (!(e instanceof quota.OutOfQuotaError)) {
+            throw e;
+        }
+    }
+}
 
 describe('Loading presets', function () {
-
     it('should allow setting a custom manager name', function () {
-
-        var quotaServer = new quota.Server();
-        quotaServer.addManager('bitly1', {
-            preset: 'bitly'
+        const quotaServer = new quota.Server({
+            'bitly1': {
+                preset: 'bitly'
+            },
+            'bitly2': {
+                preset: 'bitly'
+            }
         });
-        quotaServer.addManager('bitly2', {
-            preset: 'bitly'
-        });
 
-        var quotaClient = new quota.Client(quotaServer);
+        const quotaClient = new quota.Client(quotaServer);
 
         return Promise.all([
             quotaClient.requestQuota('bitly1', {}, { requests:5 }, { maxWait: 0 }),
-            quotaClient.requestQuota('bitly1', {}, { requests:5 }, { maxWait: 0 })
-                .then(function () {
-                    throw new Error('Expected OutOfQuotaError');
-                })
-                .catch(quota.OutOfQuotaError, function (err) {
-                    return; // Expected
-                }),
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly1', {}, { requests:5 }, { maxWait: 0 })),
             quotaClient.requestQuota('bitly2', {}, { requests:5 }, { maxWait: 0 }),
-            quotaClient.requestQuota('bitly2', {}, { requests:5 }, { maxWait: 0 })
-                .then(function () {
-                    throw new Error('Expected OutOfQuotaError');
-                })
-                .catch(quota.OutOfQuotaError, function (err) {
-                    return; // Expected
-                })
+            shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly2', {}, { requests:5 }, { maxWait: 0 }))
         ]);
-
     });
-
 });
