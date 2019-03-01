@@ -3,6 +3,8 @@ import Grant from "../common/Grant";
 import SocketIO from "socket.io";
 
 declare class Server {
+    constructor(managers: { [managerName: string]: Manager | {} });
+
     /**
      * Adds the selected manager to the Server. If a preset is set
      * or options is not specified, a preset is loaded.
