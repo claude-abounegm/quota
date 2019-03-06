@@ -7,7 +7,7 @@ describe('Preset TeamWork', function () {
     it('should work', async function () {
         const quotaServer = new quota.Server({
             'teamwork': {
-                concurrentLimit: false
+                concurrentLimit: 10
             }
         });
         const quotaClient = new quota.Client(quotaServer);
