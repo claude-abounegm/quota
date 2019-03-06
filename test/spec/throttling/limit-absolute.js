@@ -31,7 +31,7 @@ describe('Throttling LimitAbsolute', function () {
         const quotaClient = new quota.Client(quotaServer);
         return shouldThrowOutOfQuota(() => quotaClient.requestQuota('test'))
             .catch(function (err) {
-                expect(err.message).to.eql('Please pass the limit parameter to allow limit-absolute throttling');
+                expect(err.message).to.eql('Please pass the limit parameter to allow throttling');
             });
     });
 

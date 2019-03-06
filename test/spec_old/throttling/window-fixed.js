@@ -1,14 +1,10 @@
 'use strict';
 
-var quota = require('../../../lib/index.js');
-
-var _ = require('lodash');
-
+const quota = require('../../../lib');
+const _ = require('lodash');
 
 describe('Throttling WindowFixed', function () {
-
     it('should validate options.limit', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             getStartOfNextWindow: _.noop(),
@@ -30,11 +26,9 @@ describe('Throttling WindowFixed', function () {
             .catch(function (err) {
                 expect(err.message).to.eql('Please pass the limit parameter to allow window-fixed throttling');
             });
-
     });
 
     it('should validate options.getStartOfNextWindow', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             limit: 1,
@@ -59,11 +53,9 @@ describe('Throttling WindowFixed', function () {
             .catch(function (err) {
                 expect(err.message).to.eql('Please pass a function as the getStartOfNextWindow parameter to allow window-fixed throttling');
             });
-
     });
 
     it('should start a new window', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             limit: 1,
@@ -82,15 +74,12 @@ describe('Throttling WindowFixed', function () {
 
         return Promise.resolve()
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function (grant) {
                         grant.dismiss();
                     });
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -98,16 +87,12 @@ describe('Throttling WindowFixed', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             })
             .delay(10)
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -115,13 +100,10 @@ describe('Throttling WindowFixed', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             });
-
     });
 
     it('should allow increasing the limit', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             name: 'main',
@@ -144,15 +126,12 @@ describe('Throttling WindowFixed', function () {
 
         return Promise.resolve()
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function (grant) {
                         _grant = grant;
                     });
-
             })
             .then(function () {
-
                 setTimeout(function () {
                     _grant.dismiss({
                         forRule: {
@@ -164,15 +143,11 @@ describe('Throttling WindowFixed', function () {
                 }, 5);
 
                 return quotaClient.requestQuota('test');
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test', undefined, undefined, { maxWait: 0 })
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -180,13 +155,10 @@ describe('Throttling WindowFixed', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             });
-
     });
 
     it('should allow decreasing the limit', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             name: 'main',
@@ -207,7 +179,6 @@ describe('Throttling WindowFixed', function () {
 
         return Promise.resolve()
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function (grant) {
                         grant.dismiss({
@@ -218,10 +189,8 @@ describe('Throttling WindowFixed', function () {
                             }
                         });
                     });
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test', undefined, undefined, { maxWait: 0 })
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -229,9 +198,6 @@ describe('Throttling WindowFixed', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             });
-
     });
-
 });

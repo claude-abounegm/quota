@@ -1,6 +1,6 @@
 'use strict';
 
-const quota = require('../../../lib/index.js');
+const quota = require('../../../lib');
 const _ = require('lodash');
 
 async function shouldThrowOutOfQuota(fn) {
@@ -16,10 +16,11 @@ async function shouldThrowOutOfQuota(fn) {
 
 describe('Preset Bitly', function () {
     it('should allow 5 concurrent requests', async function () {
-        var quotaServer = new quota.Server();
-        quotaServer.addManager('bitly');
+        const quotaServer = new quota.Server({
+            'bitly': {}
+        });
 
-        var quotaClient = new quota.Client(quotaServer);
+        const quotaClient = new quota.Client(quotaServer);
 
         await Promise.all([
             quotaClient.requestQuota('bitly', undefined, undefined, {
@@ -40,6 +41,55 @@ describe('Preset Bitly', function () {
         ]);
 
         await shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly', undefined, undefined, {
+            maxWait: 0
+        }));
+    });
+
+    it('shared ip addresses', async function () {
+        const quotaServer = new quota.Server({
+            'bitly': {
+                sharedIPAddress: true
+            }
+        });
+
+        const quotaClient = new quota.Client(quotaServer);
+
+        await Promise.all([
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.1'
+            }, undefined, {
+                maxWait: 0
+            }),
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.1'
+            }, undefined, {
+                maxWait: 0
+            }),
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.1'
+            }, undefined, {
+                maxWait: 0
+            }),
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.1'
+            }, undefined, {
+                maxWait: 0
+            }),
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.1'
+            }, undefined, {
+                maxWait: 0
+            }),
+            quotaClient.requestQuota('bitly', {
+                ipAddress: '192.168.0.2'
+            }, undefined, {
+                maxWait: 0
+            })
+        ]);
+
+        shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly', {
+            ipAddress: '192.168.0.1'
+        }, undefined, {
             maxWait: 0
         }));
     });

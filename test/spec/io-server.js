@@ -15,14 +15,10 @@ async function shouldThrowNoManager(fn) {
 }
 
 describe('io server', function () {
-    it('should throw when adding manager', async function () {
+    const data = {};
+    beforeEach(function () {
         const io = require('socket.io')(3030);
-
         const quotaServer = new quota.Server();
-        quotaServer.addManager('ga', {
-            preset: 'google-analytics',
-            queriesPerSecond: 1
-        });
         quotaServer.attachIo(io);
 
         const ioApi = new IoApi({
@@ -30,26 +26,47 @@ describe('io server', function () {
         });
         const quotaClient = new quota.Client(ioApi);
 
-        try {
-            await ioApi.addManager('google-analytics');
-            throw new Error('expected Error');
-        } catch (e) {}
-
-        quotaClient.dispose();
-        io.close();
+        Object.assign(data, {
+            io,
+            ioApi,
+            quotaServer,
+            quotaClient
+        });
     });
 
-    it('should connect to server and wait one second', async function () {
-        const io = require('socket.io')(3030);
+    afterEach(function () {
+        data['io'].close();
+        data['quotaClient'].dispose();
+    });
 
-        const quotaServer = new quota.Server();
+    it('should throw when adding manager', async function () {
+        const {
+            ioApi,
+            quotaServer
+        } = data;
+
         quotaServer.addManager('ga', {
             preset: 'google-analytics',
             queriesPerSecond: 1
         });
-        quotaServer.attachIo(io);
 
-        const quotaClient = new quota.Client('http://localhost:3030');
+        try {
+            await ioApi.addManager('google-analytics');
+            throw new Error('expected Error');
+        } catch (e) {}
+    });
+
+    it('should connect to server and wait one second', async function () {
+        const {
+            quotaServer,
+            quotaClient
+        } = data;
+
+        quotaServer.addManager('ga', {
+            preset: 'google-analytics',
+            queriesPerSecond: 1
+        });
+
         const start = Date.now();
 
         for (let i = 0; i < 2; ++i) {
@@ -65,22 +82,18 @@ describe('io server', function () {
             }
             grant.dismiss();
         }
-
-        quotaClient.dispose();
-        io.close();
     });
 
     it('should throw an OutOfQuotaError', async function () {
-        const io = require('socket.io')(3030);
+        const {
+            quotaServer,
+            quotaClient
+        } = data;
 
-        const quotaServer = new quota.Server();
         quotaServer.addManager('ga', {
             preset: 'google-analytics',
             queriesPerSecond: 1
         });
-        quotaServer.attachIo(io);
-
-        const quotaClient = new quota.Client('http://localhost:3030');
 
         await quotaClient.requestQuota('ga-core', {
             viewId: 123
@@ -105,33 +118,30 @@ describe('io server', function () {
                 throw e;
             }
         }
-
-        quotaClient.dispose();
-        io.close();
     });
 
     it('should throw a NoManagerError', async function () {
-        const io = require('socket.io')(3030);
+        const {
+            quotaServer,
+            quotaClient
+        } = data;
 
-        const quotaServer = new quota.Server({
-            'test': new quota.Manager({
-                rules: [{
-                    limit: 1,
-                    throttling: 'limit-absolute'
-                }]
-            })
-        });
-        quotaServer.attachIo(io);
+        quotaServer.addManager('test', new quota.Manager({
+            rules: [{
+                limit: 1,
+                throttling: 'limit-absolute'
+            }]
+        }));
 
-        const quotaClient = new quota.Client('http://localhost:3030');
         await shouldThrowNoManager(() => quotaClient.requestQuota('unknown'));
-
-        quotaClient.dispose();
-        io.close();
     });
 
     it('should throw a NoManagerError', async function () {
-        const io = require('socket.io')(3030);
+        const {
+            io,
+            ioApi
+        } = data;
+
         const {
             errorToIo
         } = require('../../lib/common/utils');
@@ -143,11 +153,8 @@ describe('io server', function () {
                 error.field1 = "field1";
                 cb(errorToIo(error));
             });
-        })
-
-        const ioApi = new IoApi({
-            uri: 'http://localhost:3030'
         });
+
         try {
             await ioApi._request('quota.testError', () => {});
         } catch (e) {
@@ -159,8 +166,5 @@ describe('io server', function () {
                 throw new Error("e.message !== errorMessage");
             }
         }
-
-        ioApi.dispose();
-        io.close();
     });
 });

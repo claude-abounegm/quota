@@ -5,9 +5,7 @@ const _ = require('lodash');
 const quota = require('../../../lib');
 
 describe('Throttling WindowSliding', function () {
-
     it('should validate options.limit', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             window: 1000,
@@ -29,11 +27,9 @@ describe('Throttling WindowSliding', function () {
             .catch(function (err) {
                 expect(err.message).to.eql('Please pass the limit parameter to allow window-sliding throttling');
             });
-
     });
 
     it('should validate options.window', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             limit: 1,
@@ -55,11 +51,9 @@ describe('Throttling WindowSliding', function () {
             .catch(function (err) {
                 expect(err.message).to.eql('Please pass the window parameter to allow window-sliding throttling');
             });
-
     });
 
     it('1 request', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             limit: 1,
@@ -74,13 +68,10 @@ describe('Throttling WindowSliding', function () {
 
         return Promise.resolve()
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             })
             .delay(5)
             .then(function () {
-
                 return quotaClient.requestQuota('test')
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -88,19 +79,14 @@ describe('Throttling WindowSliding', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             })
             .delay(5)
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             });
-
     });
 
     it('2 requests', function () {
-
         var quotaManager = new quota.Manager();
         quotaManager.addRule({
             limit: 2,
@@ -115,13 +101,10 @@ describe('Throttling WindowSliding', function () {
 
         return Promise.resolve()
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             })
             .delay(5)
             .then(function () {
-
                 return quotaClient.requestQuota('test', undefined, 2)
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -129,16 +112,12 @@ describe('Throttling WindowSliding', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             })
             .then(function () {
-
                 return quotaClient.requestQuota('test');
-
             })
             .delay(5)
             .then(function () {
-
                 return quotaClient.requestQuota('test', undefined, 2)
                     .then(function () {
                         throw new Error('Expected OutOfQuotaError');
@@ -146,15 +125,10 @@ describe('Throttling WindowSliding', function () {
                     .catch(quota.OutOfQuotaError, function (err) {
                         return; // Expected
                     });
-
             })
             .delay(6)
             .then(function () {
-
                 return quotaClient.requestQuota('test', undefined, 2);
-
             });
-
     });
-
 });
