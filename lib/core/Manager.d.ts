@@ -1,5 +1,6 @@
 import Grant from "../common/Grant";
 import Rule from "./Rule";
+import Throttling from "./throttling/Throttling";
 
 declare interface ruleOptions {
     window: number,
@@ -13,7 +14,8 @@ declare interface ruleOptions {
     },
     name?: string,
     scope?: string | string[],
-    resource?: number
+    resource?: number,
+    onError: (rule: Rule, throttling: Throttling, e: Error) => void
 }
 
 declare class Manager {
@@ -26,6 +28,10 @@ declare class Manager {
         rules: (Rule | ruleOptions)[]
     }, manager?: Manager);
 
+    get rules(): Rule[];
+
+    getRule(name: string): Rule;
+
     /**
      * Adds the rule to this manager.
      */
@@ -35,6 +41,8 @@ declare class Manager {
      * Adds the rule to this manager.
      */
     addRule(rule: Rule): Rule;
+
+    reportError(e: Error): void;
 
     /**
      * Request quota

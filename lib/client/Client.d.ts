@@ -1,5 +1,5 @@
 import Manager from "../core/Manager";
-import Server from "../server/Server";
+import BaseServer from "../server/BaseServer";
 import Grant from "../common/Grant";
 import SocketIO from "socket.io";
 
@@ -18,15 +18,15 @@ declare class Client {
      * 
      * @param server The instance of a Server to be used.
      */
-    constructor(server: Server);
+    constructor(server: BaseServer);
 
-    constructor(servers: (string | Server)[]);
+    constructor(servers: (string | BaseServer)[]);
 
     /**
      * Adds a server to be used by this client.
      */
-    addServer(server: Server): void;
-    addServer(uri: string): void;
+    addServer(server: BaseServer): BaseServer;
+    addServer(uri: string): BaseServer;
 
     /**
      * Disposes of resources such as open connections

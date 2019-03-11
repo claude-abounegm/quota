@@ -14,19 +14,19 @@ declare class Rule {
         },
         name?: string,
         scope?: string | string[],
-        resource?: number
+        resource?: string
     });
 
-    getName(): string;
-    getResource(): string;
-    limitsResource(resource: string): boolean;
+    get name(): string;
+    get resource(): string;
 
+    reportError(e: Error): void;
+
+    limitsResource(resource: string): boolean;
     isAvailable(managerName, scope, resources, options, queuedRequest): boolean;
+
     enqueue(managerName, scope, resources, options, queuedRequest);
     reserve(managerName, scope, resources, options);
-    formatScope(scope);
-    getBundleForScope(managerName, scope);
-    getResourceAmount(resources);
 }
 
 export = Rule;
