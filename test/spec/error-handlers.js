@@ -82,6 +82,26 @@ describe('Error Handlers', function () {
         }
     });
 
+    it('should work in io with grant.dimiss()', async function () {
+        const io = require('socket.io')(3030);
+        const quotaServer = newServer();
+        quotaServer.attachIo(io);
+        const quotaClient = new quota.Client('http://localhost:3030');
+
+        try {
+            const grant = await quotaClient.requestQuota('test', {}, {
+                requests: 1
+            });
+
+            await grant.dismiss({
+                error: new Error403()
+            });
+        } finally {
+            io.close();
+            quotaClient.dispose();
+        }
+    });
+
     it('should work in normal', async function () {
         const quotaServer = newServer();
         const quotaClient = new quota.Client(quotaServer);
