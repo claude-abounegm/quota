@@ -11,16 +11,10 @@ declare class Client {
      * @param uri The URI of the server's socket.io
      */
     constructor(uri: string);
-
-    /**
-     * Creates a new Quota Client. The client is responsible
-     * to communicate with different servers: remote and local.
-     * 
-     * @param server The instance of a Server to be used.
-     */
     constructor(server: BaseServer);
-
     constructor(servers: (string | BaseServer)[]);
+
+    get servers(): BaseServer[];
 
     /**
      * Adds a server to be used by this client.
@@ -32,6 +26,8 @@ declare class Client {
      * Disposes of resources such as open connections
      */
     dispose(): Promise<void>;
+
+    reportError(managerName: string, error: Error): void;
 
     /**
      * Request quota

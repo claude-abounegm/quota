@@ -41,6 +41,8 @@ declare class Server {
         maxWait?: number
     }): Promise<Grant>;
 
+    reportError(managerName: string, error: Error): void;
+
     /**
      * Exposes the server to the io server for use
      * on network.
