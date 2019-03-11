@@ -26,7 +26,7 @@ describe('Error Handlers', function () {
                     },
                     queueing: 'fifo',
                     resource: 'requests',
-                    onError: (_rule, throttling, e) => {
+                    onError: (throttling, e) => {
                         if (e.code === 403) {
                             throttling.saturate();
                         }

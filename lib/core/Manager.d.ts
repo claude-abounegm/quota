@@ -15,7 +15,7 @@ declare interface ruleOptions {
     name?: string,
     scope?: string | string[],
     resource?: number,
-    onError: (rule: Rule, throttling: Throttling, e: Error) => void
+    onError: (throttling: Throttling, e: Error) => void
 }
 
 declare class Manager {
