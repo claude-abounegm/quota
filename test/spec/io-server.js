@@ -45,39 +45,40 @@ describe('io server', function () {
             quotaServer
         } = data;
 
-        quotaServer.addManager('ga', {
-            preset: 'google-analytics',
-            queriesPerSecond: 1
-        });
-
         try {
             await ioApi.addManager('google-analytics');
             throw new Error('expected Error');
         } catch (e) {}
     });
 
-    it('should connect to server and wait one second', async function () {
+    it('should connect to server and wait 50ms', async function () {
         const {
             quotaServer,
             quotaClient
         } = data;
 
-        quotaServer.addManager('ga', {
-            preset: 'google-analytics',
-            queriesPerSecond: 1
-        });
+        const WAIT_TIME = 50;
+
+        quotaServer.addManager('test', new quota.Manager({
+            rules: [{
+                limit: 1,
+                window: WAIT_TIME,
+                throttling: 'window-sliding',
+                queueing: 'fifo'
+            }]
+        }));
 
         const start = Date.now();
 
         for (let i = 0; i < 2; ++i) {
-            const grant = await quotaClient.requestQuota('ga-core', {
+            const grant = await quotaClient.requestQuota('test', {
                 viewId: 1234
             }, {
                 requests: 1
             });
 
             const diff = Date.now() - start;
-            if (i === 1 && diff < 1000) {
+            if (i === 1 && diff < WAIT_TIME) {
                 throw new Error('should wait at least one second');
             }
             grant.dismiss();
