@@ -190,6 +190,15 @@ dismiss(feedback: {
 
 Description forthcoming.
 
+## Error Handling
+```ts
+client.reportError(managerName: string, error: Error): void
+```
+
+To report errors that can occur when requesting from apis, you can use the above function. The `Rule` must have an `onError` handler registered to handle the error.
+
+Example forthcoming.
+
 ## Configuring Custom Quota Limits
 
 If a preset for a certain API is not available or custom quota limits need to be enforced you can use the same API that the presets use.

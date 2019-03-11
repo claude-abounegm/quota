@@ -3,6 +3,8 @@
 const quota = require('../../../lib');
 const _ = require('lodash');
 
+
+
 describe('Preset Google Analytics', function () {
     it('should allow 1 query per second', async function () {
         const quotaServer = new quota.Server();
@@ -34,5 +36,39 @@ describe('Preset Google Analytics', function () {
                 throw e;
             }
         }
+    });
+
+    it('should report error', async function () {
+        const quotaServer = new quota.Server({
+            'ga': {
+                preset: 'google-analytics'
+            }
+        });
+
+        const quotaClient = new quota.Client(quotaServer);
+
+        await quotaClient.requestQuota('ga-core', {
+            viewId: 1234
+        }, {
+            requests: 1
+        });
+
+        const e = new Error('dailyLimitExceeded');
+        e.code = 403;
+        e.errors = [{
+            reason: 'dailyLimitExceeded'
+        }];
+        quotaClient.reportError('ga-core', e);
+
+        try {
+            await quotaClient.requestQuota('ga-core', {
+                viewId: 1234
+            }, {
+                requests: 1
+            }, {
+                maxWait: 50
+            });
+            throw new Error('should throw');
+        } catch {}
     });
 });

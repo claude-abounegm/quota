@@ -12,7 +12,7 @@ const {
 describe('Error Handlers', function () {
     const NEXT_WINDOW_MS = 50;
 
-    function getServer() {
+    function newServer() {
         return new quota.Server({
             'test': new quota.Manager({
                 backoff: 'timeout',
@@ -70,7 +70,7 @@ describe('Error Handlers', function () {
 
     it('should work in io', async function () {
         const io = require('socket.io')(3030);
-        const quotaServer = getServer();
+        const quotaServer = newServer();
         quotaServer.attachIo(io);
         const quotaClient = new quota.Client('http://localhost:3030');
 
@@ -83,7 +83,7 @@ describe('Error Handlers', function () {
     });
 
     it('should work in normal', async function () {
-        const quotaServer = getServer();
+        const quotaServer = newServer();
         const quotaClient = new quota.Client(quotaServer);
         await executeTest(quotaClient);
     });
