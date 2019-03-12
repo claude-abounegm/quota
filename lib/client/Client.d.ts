@@ -14,7 +14,7 @@ declare class Client {
     constructor(server: BaseServer);
     constructor(servers: (string | BaseServer)[]);
 
-    get servers(): BaseServer[];
+    servers: BaseServer[];
 
     /**
      * Adds a server to be used by this client.
