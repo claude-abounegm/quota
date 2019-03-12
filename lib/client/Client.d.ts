@@ -27,8 +27,6 @@ declare class Client {
      */
     dispose(): Promise<void>;
 
-    reportError(managerName: string, error: Error): void;
-
     /**
      * Request quota
      */

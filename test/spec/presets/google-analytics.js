@@ -45,7 +45,7 @@ describe('Preset Google Analytics', function () {
 
         const quotaClient = new quota.Client(quotaServer);
 
-        await quotaClient.requestQuota('ga-core', {
+        const grant = await quotaClient.requestQuota('ga-core', {
             viewId: 1234
         }, {
             requests: 1
@@ -56,7 +56,10 @@ describe('Preset Google Analytics', function () {
         e.errors = [{
             reason: 'dailyLimitExceeded'
         }];
-        quotaClient.reportError('ga-core', e);
+
+        grant.dismiss({
+            error: e
+        });
 
         try {
             await quotaClient.requestQuota('ga-core', {

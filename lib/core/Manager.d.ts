@@ -42,8 +42,6 @@ declare class Manager {
      */
     addRule(rule: Rule): Rule;
 
-    reportError(e: Error): void;
-
     /**
      * Request quota
      */

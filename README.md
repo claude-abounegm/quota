@@ -192,7 +192,9 @@ Description forthcoming.
 
 ## Error Handling
 ```ts
-client.reportError(managerName: string, error: Error): void
+grant.dismiss({
+	error
+});
 ```
 
 To report errors that can occur when requesting from apis, you can use the above function. The `Rule` must have an `onError` handler registered to handle the error.

@@ -20,8 +20,6 @@ declare class Rule {
     get name(): string;
     get resource(): string;
 
-    reportError(e: Error): void;
-
     limitsResource(resource: string): boolean;
     isAvailable(managerName, scope, resources, options, queuedRequest): boolean;
 

@@ -49,11 +49,13 @@ describe('Error Handlers', function () {
      * @param {QuotaClient} quotaClient 
      */
     async function executeTest(quotaClient) {
-        await quotaClient.requestQuota('test', {}, {
+        const grant = await quotaClient.requestQuota('test', {}, {
             requests: 1
         });
 
-        quotaClient.reportError('test', new Error403());
+        grant.dismiss({
+            error: new Error403()
+        });
 
         try {
             const start = Date.now();
