@@ -28,7 +28,7 @@ declare class Manager {
         rules: (Rule | ruleOptions)[]
     }, manager?: Manager);
 
-    get rules(): Rule[];
+    rules: Rule[];
 
     getRule(name: string): Rule;
 

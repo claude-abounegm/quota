@@ -1,5 +1,4 @@
 import Grant from "../common/Grant";
-import Rule from "./Rule";
 
 declare class Rule {
     constructor(options: {
@@ -17,8 +16,8 @@ declare class Rule {
         resource?: string
     });
 
-    get name(): string;
-    get resource(): string;
+    name: string;
+    resource: string;
 
     limitsResource(resource: string): boolean;
     isAvailable(managerName, scope, resources, options, queuedRequest): boolean;
