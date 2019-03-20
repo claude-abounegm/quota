@@ -20,10 +20,10 @@ declare class Rule {
     resource: string;
 
     limitsResource(resource: string): boolean;
-    isAvailable(managerName, scope, resources, options, queuedRequest): boolean;
+    isAvailable(scope, resources, options, queuedRequest): boolean;
 
     enqueue(managerName, scope, resources, options, queuedRequest);
-    reserve(managerName, scope, resources, options);
+    reserve(scope, resources, options);
 }
 
 export = Rule;
