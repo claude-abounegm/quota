@@ -111,7 +111,7 @@ describe('Preset Google Analytics', function () {
     });
 
     it('should work', async function () {
-        this.timeout(10 * 1000);
+        this.timeout(10 * 60 * 1000);
 
         // const io = require('socket.io')(3030);
         const quotaServer = new quota.Server({
