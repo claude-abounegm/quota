@@ -1,28 +1,38 @@
 import Grant from "../common/Grant";
+import QueuedRequest from "../core/queueing/QueuedRequest";
 
 declare class Rule {
     constructor(options: {
-        window: number,
-        limit: number,
-        throttling: string | {
-            type: string,
-            getStartOfNextWindow: () => number
-        },
-        queueing: string | {
-            type: string
-        },
-        name?: string,
-        scope?: string | string[],
-        resource?: string
+        window: number;
+        limit: number;
+        throttling:
+            | string
+            | {
+                  type: string;
+                  getStartOfNextWindow: () => number;
+              };
+        queueing:
+            | string
+            | {
+                  type: string;
+              };
+        name?: string;
+        scope?: string | string[];
+        resource?: string;
     });
 
     name: string;
     resource: string;
 
     limitsResource(resourceName: string): boolean;
-    isAvailable(scope, resources, queuedRequest): boolean;
+    isAvailable(scope, resources, queuedRequest?: QueuedRequest): boolean;
 
-    enqueue(managerName, scope, resources, options, queuedRequest);
+    enqueue(
+        managerName: string,
+        scope: { [scopeName: string]: string },
+        options: { maxWait?: number },
+        queuedRequest?: QueuedRequest
+    ): Promise<QueuedRequest>;
     reserve(scope, resources);
 }
 
