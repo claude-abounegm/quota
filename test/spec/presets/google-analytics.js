@@ -111,9 +111,13 @@ describe('Preset Google Analytics', function () {
     });
 
     async function test(quotaClient) {
+        const qps = 10;
+
         const start = 1;
-        const end = 13;
+        const end = 20;
         let obj = {};
+
+        const startTime = Date.now();
         await Promise.all(_.range(start, end + 1).map(async i => {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -133,21 +137,29 @@ describe('Preset Google Analytics', function () {
                 }
             });
         }));
+        const endTime = Date.now();
 
         for (const i of _.range(start, end + 1)) {
             if (!obj[i]) {
                 throw new Error('should cover all');
             }
         }
+
+        const diff = endTime - startTime;
+        const expectedDiff = ((end - qps) / qps) * 1000;
+
+        if(diff < expectedDiff) {
+            throw new Error(`should elapse at least ${expectedDiff}ms; got: ${diff}ms`);
+        }
     }
 
     it('should work', async function () {
-        this.timeout(10 * 1000);
+        this.timeout(80 * 1000);
 
         const quotaServer = new quota.Server({
             'ga': {
                 preset: 'google-analytics',
-                queriesPerSecond: 8
+                queriesPerSecond: 10
             }
         });
         const quotaClient = new quota.Client(quotaServer);
@@ -156,13 +168,13 @@ describe('Preset Google Analytics', function () {
     });
 
     it('should work on io', async function () {
-        this.timeout(10 * 1000);
+        this.timeout(80 * 1000);
 
         const io = require('socket.io')(3030);
         new quota.Server({
             'ga': {
                 preset: 'google-analytics',
-                queriesPerSecond: 8
+                queriesPerSecond: 10
             }
         }, io);
         const quotaClient = new quota.Client('http://localhost:3030');

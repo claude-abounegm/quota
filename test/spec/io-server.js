@@ -21,9 +21,7 @@ describe('io server', function () {
         const quotaServer = new quota.Server();
         quotaServer.attachIo(io);
 
-        const ioApi = new IoApi({
-            uri: 'http://localhost:3030'
-        });
+        const ioApi = new IoApi('http://localhost:3030');
         const quotaClient = new quota.Client(ioApi);
 
         Object.assign(data, {

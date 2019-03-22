@@ -1,5 +1,8 @@
 'use strict';
 
+const {
+    assert
+} = require('chai');
 const quota = require('../../lib');
 
 describe('Client', function () {
@@ -48,5 +51,20 @@ describe('Client', function () {
             new quota.Client({});
             throw new Error('did not throw');
         } catch {}
+    });
+
+    it('should accept an object for io', function () {
+        let quotaClient;
+        try {
+            const host = 'http://localhost';
+            const port = 80;
+            quotaClient = new quota.Client({
+                host,
+                port
+            });
+            assert.equal(quotaClient.servers[0].api.socket.io.uri, `${host}:${port}`);
+        } finally {
+            quotaClient && quotaClient.dispose();
+        }
     });
 });
