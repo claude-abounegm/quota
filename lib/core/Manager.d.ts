@@ -25,7 +25,7 @@ declare class Manager {
      * of another manager.
      */
     constructor(options?: {
-        backoff?: string,
+        backoff?: string | { type: string; shouldBackoff: (e?: Error) => boolean },
         rules: (Rule | ruleOptions)[]
     }, manager?: Manager);
 
