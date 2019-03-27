@@ -1,7 +1,7 @@
 'use strict';
 
 const quota = require('../../lib');
-const BaseGrant = require('../../lib/common/BaseGrant');
+const BaseGrant = require('../../lib/core/BaseGrant');
 
 describe('BaseGrant', function () {
     it('should throw an error on dismiss()', function () {

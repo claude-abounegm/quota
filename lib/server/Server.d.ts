@@ -1,5 +1,5 @@
 import Manager from "../core/Manager";
-import Grant from "../common/Grant";
+import Grant from "../core/Grant";
 import SocketIO from "socket.io";
 
 declare class Server {

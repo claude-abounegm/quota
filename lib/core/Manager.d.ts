@@ -1,4 +1,4 @@
-import Grant from "../common/Grant";
+import Grant from "./Grant";
 import Rule from "./Rule";
 import Throttling from "./throttling/Throttling";
 

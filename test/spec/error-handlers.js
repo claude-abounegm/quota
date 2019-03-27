@@ -15,7 +15,6 @@ describe('Error Handlers', function () {
     function newServer() {
         return new quota.Server({
             'test': new quota.Manager({
-                backoff: 'timeout',
                 rules: [{
                     limit: 100,
                     throttling: {

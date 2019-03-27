@@ -1,5 +1,5 @@
-import Grant from "../common/Grant";
-import QueuedRequest from "../core/queueing/QueuedRequest";
+import Grant from "./Grant";
+import QueuedRequest from "./queueing/QueuedRequest";
 
 declare class Rule {
     constructor(options: {
