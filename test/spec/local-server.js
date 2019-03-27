@@ -124,79 +124,105 @@ describe('Local Server', function () {
             }));
         });
 
-        //     it('with 1 rule and complex scope', function () {
+        it('with 1 rule and complex scope', function () {
+            const quotaServer = new quota.Server({
+                'test': new quota.Manager({
+                    rules: [{
+                        limit: 1,
+                        throttling: 'limit-absolute',
+                        scope: ['id', 'id2']
+                    }]
+                })
+            });
 
-        //         var quotaManager = new quota.Manager();
-        //         quotaManager.addRule({
-        //             limit: 1,
-        //             throttling: 'limit-absolute',
-        //             scope: ['id', 'id2']
-        //         });
+            const quotaClient = new quota.Client(quotaServer);
 
-        //         var quotaServer = new quota.Server();
-        //         quotaServer.addManager('test', quotaManager);
-
-        //         var quotaClient = new quota.Client(quotaServer);
-
-        //         return Promise.resolve()
-        //             .then(function () {
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: 1 });
-        //             })
-        //             .then(function () {
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: 2 });
-        //             })
-        //             .then(function () {
-        //                 return quotaClient.requestQuota('test', { id: 2, id2: 1 });
-        //             })
-        //             .then(function () {
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: null });
-        //             })
-        //             .then(function () {
-
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: 1 })
-        //                     .then(function () {
-        //                         throw new Error('Expected OutOfQuotaError');
-        //                     })
-        //                     .catch(quota.OutOfQuotaError, function (err) {
-        //                         return; // Expected
-        //                     });
-
-        //             })
-        //             .then(function () {
-
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: 2 })
-        //                     .then(function () {
-        //                         throw new Error('Expected OutOfQuotaError');
-        //                     })
-        //                     .catch(quota.OutOfQuotaError, function (err) {
-        //                         return; // Expected
-        //                     });
-
-        //             })
-        //             .then(function () {
-
-        //                 return quotaClient.requestQuota('test', { id: 2, id2: 1 })
-        //                     .then(function () {
-        //                         throw new Error('Expected OutOfQuotaError');
-        //                     })
-        //                     .catch(quota.OutOfQuotaError, function (err) {
-        //                         return; // Expected
-        //                     });
-
-        //             })
-        //             .then(function () {
-
-        //                 return quotaClient.requestQuota('test', { id: 1, id2: null })
-        //                     .then(function () {
-        //                         throw new Error('Expected OutOfQuotaError');
-        //                     })
-        //                     .catch(quota.OutOfQuotaError, function (err) {
-        //                         return; // Expected
-        //                     });
-
-        //             });
-
-        //     });
+            return Promise.resolve()
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                        id: 1,
+                        id2: 1
+                    });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                        id: 1,
+                        id2: 2
+                    });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                        id: 2,
+                        id2: 1
+                    });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                        id: 1,
+                        id2: null
+                    });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                            id: 1,
+                            id2: 1
+                        })
+                        .then(function () {
+                            throw new Error('Expected OutOfQuotaError');
+                        })
+                        .catch(function (err) {
+                            if (!(err instanceof quota.OutOfQuotaError)) {
+                                throw new Error();
+                            }
+                            return; // Expected
+                        });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                            id: 1,
+                            id2: 2
+                        })
+                        .then(function () {
+                            throw new Error('Expected OutOfQuotaError');
+                        })
+                        .catch(function (err) {
+                            if (!(err instanceof quota.OutOfQuotaError)) {
+                                throw new Error();
+                            }
+                            return; // Expected
+                        });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                            id: 2,
+                            id2: 1
+                        })
+                        .then(function () {
+                            throw new Error('Expected OutOfQuotaError');
+                        })
+                        .catch(function (err) {
+                            if (!(err instanceof quota.OutOfQuotaError)) {
+                                throw new Error();
+                            }
+                            return; // Expected
+                        });
+                })
+                .then(function () {
+                    return quotaClient.requestQuota('test', {
+                            id: 1,
+                            id2: null
+                        })
+                        .then(function () {
+                            throw new Error('Expected OutOfQuotaError');
+                        })
+                        .catch(function (err) {
+                            if (!(err instanceof quota.OutOfQuotaError)) {
+                                throw new Error();
+                            }
+                            return; // Expected
+                        });
+                });
+        });
 
         //     it('with 3 rules and complex scope (1)', function () {
 

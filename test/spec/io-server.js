@@ -135,7 +135,7 @@ describe('io server', function () {
         await shouldThrowNoManager(() => quotaClient.requestQuota('unknown'));
     });
 
-    it('should throw a NoManagerError', async function () {
+    it('should be able to connect to io using _request', async function () {
         const {
             io,
             ioApi
