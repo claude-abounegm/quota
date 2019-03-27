@@ -1,5 +1,6 @@
 import Grant from "./Grant";
 import Rule from "./Rule";
+import Backoff from "./backoff/Backoff";
 import Throttling from "./throttling/Throttling";
 
 declare interface ruleOptions {
@@ -52,6 +53,8 @@ declare class Manager {
     }, options?: {
         maxWait?: number
     }): Promise<Grant>;
+
+    backoff: Backoff;
 }
 
 export = Manager;
