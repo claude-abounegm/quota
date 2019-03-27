@@ -166,11 +166,11 @@ quotaClient.requestQuota('bitly', /* ... */ ).then(grant => { /* ... */ });
 
 ```ts
 requestQuota(managerName: string, scope?: {
-	[scopeName: string]: any
+  [scopeName: string]: any
 }, resources?: {
-	[resourceName: string]: number
+  [resourceName: string]: number
 }, options?: {
-	maxWait?: number
+  maxWait?: number
 }): Promise<Grant>;
 ```
 
@@ -180,12 +180,12 @@ Description forthcoming.
 
 ```ts
 dismiss(feedback: {
-	forRule: {
-		[ruleName: string]: {
-			limit?: number
-		}
-	}
-}): void;
+  forRule: {
+    [ruleName: string]: {
+      limit?: number
+    }
+  }
+}): Promise<void> | void;
 ```
 
 Description forthcoming.
@@ -193,7 +193,7 @@ Description forthcoming.
 ## Error Handling
 ```ts
 grant.dismiss({
-	error
+  error: Error
 });
 ```
 

@@ -1,7 +1,7 @@
 import Grant from "./Grant";
 import Rule from "./Rule";
-import Backoff from "./backoff/Backoff";
-import Throttling from "./throttling/Throttling";
+import Backoff from "../common/Backoff";
+import Throttling from "../common/Throttling";
 
 declare interface ruleOptions {
     window: number,

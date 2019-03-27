@@ -1,4 +1,4 @@
-import BaseServer from "../server/BaseServer";
+import BaseServer from "../common/BaseServer";
 import Manager from "../core/Manager";
 import Grant from "../core/Grant";
 import SocketIO from "socket.io";
