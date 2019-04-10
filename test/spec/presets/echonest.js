@@ -17,7 +17,9 @@ async function shouldThrowOutOfQuota(fn) {
 describe('Preset Echonest', function () {
     it('should allow updating the limit', async function () {
         const quotaServer = new quota.Server({
-            'echonest': {}
+            'echonest': {
+                preset: 'echonest'
+            }
         });
 
         const quotaClient = new quota.Client(quotaServer);
@@ -41,7 +43,9 @@ describe('Preset Echonest', function () {
 
     it('should grant more requests if limit is increased', async function () {
         const quotaServer = new quota.Server({
-            'echonest': {}
+            'echonest': {
+                preset: 'echonest'
+            }
         });
 
         const quotaClient = new quota.Client(quotaServer);

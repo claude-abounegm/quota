@@ -17,7 +17,9 @@ async function shouldThrowOutOfQuota(fn) {
 describe('Preset Bitly', function () {
     it('should allow 5 concurrent requests', async function () {
         const quotaServer = new quota.Server({
-            'bitly': {}
+            'bitly': {
+                preset: 'bitly'
+            }
         });
 
         const quotaClient = new quota.Client(quotaServer);
@@ -48,6 +50,7 @@ describe('Preset Bitly', function () {
     it('shared ip addresses', async function () {
         const quotaServer = new quota.Server({
             'bitly': {
+                preset: 'bitly',
                 sharedIPAddress: true
             }
         });

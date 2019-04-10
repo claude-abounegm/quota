@@ -1,6 +1,6 @@
 import BaseServer from "../common/BaseServer";
 import Manager from "../core/Manager";
-import Grant from "../core/Grant";
+import BaseGrant from "../common/BaseGrant";
 import SocketIO from "socket.io";
 
 declare class Client {
@@ -34,9 +34,9 @@ declare class Client {
         [scopeName: string]: any
     }, resources?: {
         [resourceName: string]: number
-    }, options?: {
+    } | number, options?: {
         maxWait?: number
-    }): Promise<Grant>;
+    }): Promise<BaseGrant>;
 }
 
 export = Client;

@@ -25,6 +25,7 @@ declare class Manager {
      * of another manager.
      */
     constructor(options?: {
+        name: string,
         backoff?: string | { type: string; shouldBackoff: (e?: Error) => boolean },
         rules: (Rule | ruleOptions)[]
     }, manager?: Manager);
@@ -46,7 +47,7 @@ declare class Manager {
     /**
      * Request quota
      */
-    requestQuota(managerName: string, scope?: {
+    requestQuota(scope?: {
         [scopeName: string]: any
     }, resources?: {
         [resourceName: string]: number
@@ -55,6 +56,7 @@ declare class Manager {
     }): Promise<Grant>;
 
     backoff: Backoff;
+    name: string;
 }
 
 export = Manager;

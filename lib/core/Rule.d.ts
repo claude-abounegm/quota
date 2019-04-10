@@ -28,11 +28,10 @@ declare class Rule {
     isAvailable(scope, resources, queuedRequest?: QueuedRequest): boolean;
 
     enqueue(
-        managerName: string,
         scope: { [scopeName: string]: string },
         options: { maxWait?: number },
         queuedRequest?: QueuedRequest
-    ): Promise<QueuedRequest>;
+    ): Promise<QueuedRequest | boolean>;
     reserve(scope, resources);
 }
 

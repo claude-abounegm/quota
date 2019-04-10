@@ -5,9 +5,10 @@ const _ = require('lodash');
 
 describe('Preset Google Analytics', function () {
     it('should allow 1 query per second', async function () {
-        const quotaServer = new quota.Server();
-        quotaServer.addManager('ga', {
-            preset: 'google-analytics'
+        const quotaServer = new quota.Server({
+            'ga': {
+                preset: 'google-analytics'
+            }
         });
 
         const quotaClient = new quota.Client(quotaServer);

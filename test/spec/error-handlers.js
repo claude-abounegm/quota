@@ -104,7 +104,7 @@ describe('Error Handlers', function () {
                 requests: 1
             });
 
-            await grant.dismiss({
+            grant.dismiss({
                 error: new Error403()
             });
         } finally {

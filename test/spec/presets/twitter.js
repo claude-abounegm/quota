@@ -17,7 +17,9 @@ async function shouldThrowOutOfQuota(fn) {
 describe('Preset Twitter', function () {
     it('should grant quota for individual endpoints and each user', function () {
         const quotaServer = new quota.Server({
-            'twitter': {}
+            'twitter': {
+                preset: 'twitter'
+            }
         });
 
         const quotaClient = new quota.Client(quotaServer);
