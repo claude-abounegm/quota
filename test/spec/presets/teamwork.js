@@ -3,10 +3,10 @@
 const quota = require('../../../lib');
 const _ = require('lodash');
 
-describe('Preset TeamWork', function () {
-    it('should work', async function () {
+describe('Preset TeamWork', function() {
+    it('should work', async function() {
         const quotaServer = new quota.Server({
-            'teamwork': {
+            teamwork: {
                 preset: 'teamwork',
                 concurrentLimit: 10
             }
@@ -16,11 +16,16 @@ describe('Preset TeamWork', function () {
         const apiKey = 'API_KEY_DUMMY';
 
         function request(options) {
-            return quotaClient.requestQuota('teamwork', {
-                apiKey
-            }, {
-                requests: 1
-            }, options);
+            return quotaClient.requestQuota(
+                'teamwork',
+                {
+                    apiKey
+                },
+                {
+                    requests: 1
+                },
+                options
+            );
         }
 
         let grants = [];

@@ -3,9 +3,7 @@ const _ = require('lodash');
 
 const quota = require('../../lib');
 
-const {
-    expect
-} = require('chai');
+const { expect } = require('chai');
 
 async function shouldThrowOutOfQuota(fn) {
     try {
@@ -23,13 +21,15 @@ async function expectScopeError(fn) {
         await fn();
         throw new Error('Expected scope error');
     } catch (e) {
-        expect(e.message).to.eql('Please pass a value for the "id" scope with your quota request');
+        expect(e.message).to.eql(
+            'Please pass a value for the "id" scope with your quota request'
+        );
     }
 }
 
-describe('Local Server', function () {
-    describe('with a single manager', function () {
-        it('with 1 rule', async function () {
+describe('Local Server', function() {
+    describe('with a single manager', function() {
+        it('with 1 rule', async function() {
             const quotaManager = new quota.Manager();
             quotaManager.addRule({
                 limit: 1,
@@ -45,7 +45,7 @@ describe('Local Server', function () {
             await shouldThrowOutOfQuota(() => quotaClient.requestQuota('test'));
         });
 
-        it('with 2 rules', async function () {
+        it('with 2 rules', async function() {
             const quotaManager = new quota.Manager();
             quotaManager.addRule({
                 limit: 2,
@@ -65,7 +65,7 @@ describe('Local Server', function () {
             await shouldThrowOutOfQuota(() => quotaClient.requestQuota('test'));
         });
 
-        it('with 1 rule and scope', async function () {
+        it('with 1 rule and scope', async function() {
             const quotaManager = new quota.Manager();
             quotaManager.addRule({
                 limit: 1,
@@ -87,16 +87,20 @@ describe('Local Server', function () {
                 id: 2
             });
 
-            await shouldThrowOutOfQuota(() => quotaClient.requestQuota('test', {
-                id: 1
-            }));
+            await shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota('test', {
+                    id: 1
+                })
+            );
 
-            await shouldThrowOutOfQuota(() => quotaClient.requestQuota('test', {
-                id: 2
-            }));
+            await shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota('test', {
+                    id: 2
+                })
+            );
         });
 
-        it('should reject not properly set scope parameters', async function () {
+        it('should reject not properly set scope parameters', async function() {
             const quotaManager = new quota.Manager();
             quotaManager.addRule({
                 limit: 1,
@@ -109,113 +113,125 @@ describe('Local Server', function () {
 
             const quotaClient = new quota.Client(quotaServer);
 
-            await expectScopeError(() => quotaClient.requestQuota('test', undefined));
+            await expectScopeError(() =>
+                quotaClient.requestQuota('test', undefined)
+            );
             await expectScopeError(() => quotaClient.requestQuota('test', {}));
-            await expectScopeError(() => quotaClient.requestQuota('test', {
-                id: undefined
-            }));
+            await expectScopeError(() =>
+                quotaClient.requestQuota('test', {
+                    id: undefined
+                })
+            );
 
             await quotaClient.requestQuota('test', {
                 id: null
             });
 
-            await shouldThrowOutOfQuota(() => quotaClient.requestQuota('test', {
-                id: 'null'
-            }));
+            await shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota('test', {
+                    id: 'null'
+                })
+            );
         });
 
-        it('with 1 rule and complex scope', function () {
+        it('with 1 rule and complex scope', function() {
             const quotaServer = new quota.Server({
-                'test': new quota.Manager({
-                    rules: [{
-                        limit: 1,
-                        throttling: 'limit-absolute',
-                        scope: ['id', 'id2']
-                    }]
+                test: new quota.Manager({
+                    rules: [
+                        {
+                            limit: 1,
+                            throttling: 'limit-absolute',
+                            scope: ['id', 'id2']
+                        }
+                    ]
                 })
             });
 
             const quotaClient = new quota.Client(quotaServer);
 
             return Promise.resolve()
-                .then(function () {
+                .then(function() {
                     return quotaClient.requestQuota('test', {
                         id: 1,
                         id2: 1
                     });
                 })
-                .then(function () {
+                .then(function() {
                     return quotaClient.requestQuota('test', {
                         id: 1,
                         id2: 2
                     });
                 })
-                .then(function () {
+                .then(function() {
                     return quotaClient.requestQuota('test', {
                         id: 2,
                         id2: 1
                     });
                 })
-                .then(function () {
+                .then(function() {
                     return quotaClient.requestQuota('test', {
                         id: 1,
                         id2: null
                     });
                 })
-                .then(function () {
-                    return quotaClient.requestQuota('test', {
+                .then(function() {
+                    return quotaClient
+                        .requestQuota('test', {
                             id: 1,
                             id2: 1
                         })
-                        .then(function () {
+                        .then(function() {
                             throw new Error('Expected OutOfQuotaError');
                         })
-                        .catch(function (err) {
+                        .catch(function(err) {
                             if (!(err instanceof quota.OutOfQuotaError)) {
                                 throw new Error();
                             }
                             return; // Expected
                         });
                 })
-                .then(function () {
-                    return quotaClient.requestQuota('test', {
+                .then(function() {
+                    return quotaClient
+                        .requestQuota('test', {
                             id: 1,
                             id2: 2
                         })
-                        .then(function () {
+                        .then(function() {
                             throw new Error('Expected OutOfQuotaError');
                         })
-                        .catch(function (err) {
+                        .catch(function(err) {
                             if (!(err instanceof quota.OutOfQuotaError)) {
                                 throw new Error();
                             }
                             return; // Expected
                         });
                 })
-                .then(function () {
-                    return quotaClient.requestQuota('test', {
+                .then(function() {
+                    return quotaClient
+                        .requestQuota('test', {
                             id: 2,
                             id2: 1
                         })
-                        .then(function () {
+                        .then(function() {
                             throw new Error('Expected OutOfQuotaError');
                         })
-                        .catch(function (err) {
+                        .catch(function(err) {
                             if (!(err instanceof quota.OutOfQuotaError)) {
                                 throw new Error();
                             }
                             return; // Expected
                         });
                 })
-                .then(function () {
-                    return quotaClient.requestQuota('test', {
+                .then(function() {
+                    return quotaClient
+                        .requestQuota('test', {
                             id: 1,
                             id2: null
                         })
-                        .then(function () {
+                        .then(function() {
                             throw new Error('Expected OutOfQuotaError');
                         })
-                        .catch(function (err) {
+                        .catch(function(err) {
                             if (!(err instanceof quota.OutOfQuotaError)) {
                                 throw new Error();
                             }
@@ -673,7 +689,6 @@ describe('Local Server', function () {
         //                     });
         //             });
 
-
         //     });
 
         //     it('should find the right manager even after the first one got used', function () {
@@ -725,7 +740,6 @@ describe('Local Server', function () {
         //                         return; // Expected
         //                     });
         //             });
-
 
         //     });
     });

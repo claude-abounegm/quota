@@ -1,20 +1,19 @@
 'use strict';
 
-var gulp = require('gulp');
-var runSequence = require('run-sequence');
-var jshint = require('gulp-jshint');
-var jshintStylish = require('jshint-stylish');
-var istanbul = require('gulp-istanbul');
-var mocha = require('gulp-mocha');
-var chalk = require('chalk');
-var rimraf = require('rimraf');
-var coveralls = require('gulp-coveralls');
+const gulp = require('gulp');
+const runSequence = require('run-sequence');
+const jshint = require('gulp-jshint');
+const jshintStylish = require('jshint-stylish');
+const istanbul = require('gulp-istanbul');
+const mocha = require('gulp-mocha');
+const chalk = require('chalk');
+const rimraf = require('rimraf');
+const coveralls = require('gulp-coveralls');
 
-var chai = require("chai");
+const chai = require('chai');
 global.expect = chai.expect;
 
-
-var paths = {
+const paths = {
     libJsFiles: './lib/**/*.js',
     gulpfile: './gulpfile.js',
     specFiles: './test/spec/**/*.js',
@@ -22,93 +21,89 @@ var paths = {
     jshintrc: './.jshintrc'
 };
 
-
 gulp.task('dev', ['watch', 'validate']);
 
-gulp.task('watch', function () {
+gulp.task('watch', function() {
+    gulp.watch(
+        [
+            paths.libJsFiles,
+            paths.gulpfile,
+            paths.specFiles,
+            paths.fixtureFiles,
+            paths.jshintrc
+        ],
+        ['validate']
+    );
 
-    gulp.watch([
-        paths.libJsFiles,
-        paths.gulpfile,
-        paths.specFiles,
-        paths.fixtureFiles,
-        paths.jshintrc
-    ], [
-        'validate'
-    ]);
-
-    gulp.watch([
-        paths.gulpfile
-    ], [
-        'lint'
-    ]);
-
+    gulp.watch([paths.gulpfile], ['lint']);
 });
 
-gulp.task('validate', function (done) {
+gulp.task('validate', function(done) {
     runSequence('lint', 'test', done);
 });
 
-gulp.task('lint', function () {
-
-    return gulp.src([paths.libJsFiles, paths.gulpfile, paths.specFiles, paths.fixtureFiles])
+gulp.task('lint', function() {
+    return gulp
+        .src([
+            paths.libJsFiles,
+            paths.gulpfile,
+            paths.specFiles,
+            paths.fixtureFiles
+        ])
         .pipe(jshint())
         .pipe(jshint.reporter(jshintStylish))
         .pipe(jshint.reporter('fail'));
-
 });
 
-gulp.task('test', ['clean'], function (done) {
-
-    var coverageVariable = '$$cov_' + new Date().getTime() + '$$';
+gulp.task('test', ['clean'], function(done) {
+    const coverageVariable = '$$cov_' + new Date().getTime() + '$$';
 
     gulp.src(paths.libJsFiles)
-        .pipe(istanbul({
-            coverageVariable: coverageVariable
-        }))
+        .pipe(
+            istanbul({
+                coverageVariable
+            })
+        )
         .pipe(istanbul.hookRequire())
-        .on('finish', function () {
-
+        .on('finish', function() {
             gulp.src(paths.specFiles)
                 .pipe(mocha())
-                .on('error', function (err) {
+                .on('error', function(err) {
                     console.error(String(err));
                     console.error(chalk.bold.bgRed(' TESTS FAILED '));
                     done(new Error(' TESTS FAILED '));
                 })
-                .pipe(istanbul.writeReports({
-                    reporters: ['lcov'],
-                    coverageVariable: coverageVariable
-                }))
+                .pipe(
+                    istanbul.writeReports({
+                        reporters: ['lcov'],
+                        coverageVariable
+                    })
+                )
                 .on('end', done);
-
         });
-
 });
 
-gulp.task('test-without-coverage', function () {
-
-    return gulp.src(paths.specFiles)
+gulp.task('test-without-coverage', function() {
+    return gulp
+        .src(paths.specFiles)
         .pipe(mocha())
-        .on('error', function () {
+        .on('error', function() {
             console.log(chalk.bold.bgRed(' TESTS FAILED '));
         });
-
 });
 
-gulp.task('clean', function (done) {
+gulp.task('clean', function(done) {
     rimraf('./coverage', done);
 });
 
-gulp.task('ci', function (done) {
+gulp.task('ci', function(done) {
     runSequence('validate', 'coveralls', 'test-without-coverage', done);
 });
 
-gulp.task('ci-no-cov', function (done) {
+gulp.task('ci-no-cov', function(done) {
     runSequence('lint', 'test-without-coverage', done);
 });
 
-gulp.task('coveralls', function () {
-    return gulp.src('coverage/**/lcov.info')
-        .pipe(coveralls());
+gulp.task('coveralls', function() {
+    return gulp.src('coverage/**/lcov.info').pipe(coveralls());
 });

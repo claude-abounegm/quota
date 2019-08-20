@@ -1,46 +1,44 @@
 'use strict';
 
-const {
-    assert
-} = require('chai');
+const { assert } = require('chai');
 
 const quota = require('../../lib');
-const {
-    Client: QuotaClient
-} = quota;
+const { Client: QuotaClient } = quota;
 
-describe('Error Handlers', function () {
+describe('Error Handlers', function() {
     const NEXT_WINDOW_MS = 50;
 
     function newServer() {
         return new quota.Server({
-            'test': new quota.Manager({
+            test: new quota.Manager({
                 backoff: {
                     type: 'timeout',
                     delay: 200,
                     limit: 1,
                     shouldBackoff: e => {
-                        if(e.backoff) {
+                        if (e.backoff) {
                             return true;
                         }
                     }
                 },
-                rules: [{
-                    limit: 100,
-                    throttling: {
-                        type: 'window-fixed',
-                        getStartOfNextWindow: () => {
-                            return Date.now() + NEXT_WINDOW_MS;
-                        }
-                    },
-                    queueing: 'fifo',
-                    resource: 'requests',
-                    onError: (throttling, e) => {
-                        if (e.code === 403) {
-                            throttling.saturate();
+                rules: [
+                    {
+                        limit: 100,
+                        throttling: {
+                            type: 'window-fixed',
+                            getStartOfNextWindow: () => {
+                                return Date.now() + NEXT_WINDOW_MS;
+                            }
+                        },
+                        queueing: 'fifo',
+                        resource: 'requests',
+                        onError: (throttling, e) => {
+                            if (e.code === 403) {
+                                throttling.saturate();
+                            }
                         }
                     }
-                }]
+                ]
             })
         });
     }
@@ -54,13 +52,17 @@ describe('Error Handlers', function () {
     }
 
     /**
-     * 
-     * @param {QuotaClient} quotaClient 
+     *
+     * @param {QuotaClient} quotaClient
      */
     async function executeTest(quotaClient) {
-        const grant = await quotaClient.requestQuota('test', {}, {
-            requests: 1
-        });
+        const grant = await quotaClient.requestQuota(
+            'test',
+            {},
+            {
+                requests: 1
+            }
+        );
 
         grant.dismiss({
             error: new Error403()
@@ -68,9 +70,13 @@ describe('Error Handlers', function () {
 
         try {
             const start = Date.now();
-            await quotaClient.requestQuota('test', {}, {
-                requests: 1
-            });
+            await quotaClient.requestQuota(
+                'test',
+                {},
+                {
+                    requests: 1
+                }
+            );
             const end = Date.now();
 
             if (end - start < NEXT_WINDOW_MS) {
@@ -79,7 +85,7 @@ describe('Error Handlers', function () {
         } catch {}
     }
 
-    it('should work in io', async function () {
+    it('should work in io', async function() {
         const io = require('socket.io')(3030);
         const quotaServer = newServer();
         quotaServer.attachIo(io);
@@ -93,16 +99,20 @@ describe('Error Handlers', function () {
         }
     });
 
-    it('should work in io with grant.dimiss()', async function () {
+    it('should work in io with grant.dimiss()', async function() {
         const io = require('socket.io')(3030);
         const quotaServer = newServer();
         quotaServer.attachIo(io);
         const quotaClient = new quota.Client('http://localhost:3030');
 
         try {
-            const grant = await quotaClient.requestQuota('test', {}, {
-                requests: 1
-            });
+            const grant = await quotaClient.requestQuota(
+                'test',
+                {},
+                {
+                    requests: 1
+                }
+            );
 
             grant.dismiss({
                 error: new Error403()
@@ -113,7 +123,7 @@ describe('Error Handlers', function () {
         }
     });
 
-    it('should work in normal', async function () {
+    it('should work in normal', async function() {
         const quotaServer = newServer();
         const quotaClient = new quota.Client(quotaServer);
         await executeTest(quotaClient);

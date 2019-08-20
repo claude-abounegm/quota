@@ -4,38 +4,40 @@ const _ = require('lodash');
 
 const quota = require('../../../lib');
 
-describe('Queueing with maxWait', function () {
-    it('timing out', function () {
+describe('Queueing with maxWait', function() {
+    it('timing out', function() {
         const quotaServer = new quota.Server({
-            'test': {
-                rules: [{
-                    limit: 1,
-                    throttling: 'limit-concurrency',
-                    queueing: 'fifo'
-                }]
+            test: {
+                rules: [
+                    {
+                        limit: 1,
+                        throttling: 'limit-concurrency',
+                        queueing: 'fifo'
+                    }
+                ]
             }
         });
 
         const quotaClient = new quota.Client(quotaServer);
 
-        return quotaClient.requestQuota('test')
-            .then(function (firstGrant) {
-                setTimeout(function () {
-                    firstGrant.dismiss();
-                }, 10);
+        return quotaClient.requestQuota('test').then(function(firstGrant) {
+            setTimeout(function() {
+                firstGrant.dismiss();
+            }, 10);
 
-                return quotaClient.requestQuota('test', undefined, undefined, {
-                        maxWait: 0
-                    })
-                    .then(function () {
-                        throw new Error('Expected OutOfQuotaError');
-                    })
-                    .catch(function (err) {
-                        if (!(err instanceof quota.OutOfQuotaError)) {
-                            throw err;
-                        }
-                    });
-            });
+            return quotaClient
+                .requestQuota('test', undefined, undefined, {
+                    maxWait: 0
+                })
+                .then(function() {
+                    throw new Error('Expected OutOfQuotaError');
+                })
+                .catch(function(err) {
+                    if (!(err instanceof quota.OutOfQuotaError)) {
+                        throw err;
+                    }
+                });
+        });
     });
 
     // it('timing out (multiple)', function () {

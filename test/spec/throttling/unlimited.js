@@ -3,8 +3,8 @@
 const quota = require('../../../lib');
 const _ = require('lodash');
 
-describe('Throttling Unlimited', function () {
-    it('2 requests', async function () {
+describe('Throttling Unlimited', function() {
+    it('2 requests', async function() {
         const quotaManager = new quota.Manager();
         quotaManager.addRule({
             throttling: 'unlimited'

@@ -4,23 +4,24 @@ const quota = require('../../../lib');
 
 const _ = require('lodash');
 
-const {
-    expect
-} = require('chai');
+const { expect } = require('chai');
 
-describe('Throttling LimitConcurrency', function () {
-    it('should validate options.limit', function () {
+describe('Throttling LimitConcurrency', function() {
+    it('should validate options.limit', function() {
         const quotaServer = new quota.Server({
-            'test': new quota.Manager({
-                rules: [{
-                    throttling: 'limit-concurrency'
-                }]
+            test: new quota.Manager({
+                rules: [
+                    {
+                        throttling: 'limit-concurrency'
+                    }
+                ]
             })
         });
 
         const quotaClient = new quota.Client(quotaServer);
 
-        return quotaClient.requestQuota('test')
+        return quotaClient
+            .requestQuota('test')
             .then(() => {
                 throw new Error('Expected an Error');
             })
@@ -29,34 +30,40 @@ describe('Throttling LimitConcurrency', function () {
                     throw new Error('Did not expect an OutOfQuotaError');
                 }
 
-                expect(err.message).to.eql('Please pass the limit parameter to allow throttling');
+                expect(err.message).to.eql(
+                    'Please pass the limit parameter to allow throttling'
+                );
             });
     });
 
-    it('1 request', function () {
+    it('1 request', function() {
         const quotaServer = new quota.Server({
-            'test': new quota.Manager({
-                rules: [{
-                    limit: 1,
-                    throttling: 'limit-concurrency'
-                }]
+            test: new quota.Manager({
+                rules: [
+                    {
+                        limit: 1,
+                        throttling: 'limit-concurrency'
+                    }
+                ]
             })
         });
 
         const quotaClient = new quota.Client(quotaServer);
 
-        return quotaClient.requestQuota('test')
+        return quotaClient
+            .requestQuota('test')
             .then(firstGrant => {
-                return quotaClient.requestQuota('test')
-                    .then(function () {
+                return quotaClient
+                    .requestQuota('test')
+                    .then(function() {
                         throw new Error('Expected OutOfQuotaError');
                     })
-                    .catch(function (err) {
+                    .catch(function(err) {
                         if (!(err instanceof quota.OutOfQuotaError)) {
                             throw err;
                         }
                     })
-                    .then(function () {
+                    .then(function() {
                         return firstGrant;
                     });
             })

@@ -14,10 +14,10 @@ async function shouldThrowOutOfQuota(fn) {
     }
 }
 
-describe('Preset Bitly', function () {
-    it('should allow 5 concurrent requests', async function () {
+describe('Preset Bitly', function() {
+    it('should allow 5 concurrent requests', async function() {
         const quotaServer = new quota.Server({
-            'bitly': {
+            bitly: {
                 preset: 'bitly'
             }
         });
@@ -42,14 +42,16 @@ describe('Preset Bitly', function () {
             })
         ]);
 
-        await shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly', undefined, undefined, {
-            maxWait: 0
-        }));
+        await shouldThrowOutOfQuota(() =>
+            quotaClient.requestQuota('bitly', undefined, undefined, {
+                maxWait: 0
+            })
+        );
     });
 
-    it('shared ip addresses', async function () {
+    it('shared ip addresses', async function() {
         const quotaServer = new quota.Server({
-            'bitly': {
+            bitly: {
                 preset: 'bitly',
                 sharedIPAddress: true
             }
@@ -58,42 +60,79 @@ describe('Preset Bitly', function () {
         const quotaClient = new quota.Client(quotaServer);
 
         await Promise.all([
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.1'
-            }, undefined, {
-                maxWait: 0
-            }),
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.1'
-            }, undefined, {
-                maxWait: 0
-            }),
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.1'
-            }, undefined, {
-                maxWait: 0
-            }),
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.1'
-            }, undefined, {
-                maxWait: 0
-            }),
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.1'
-            }, undefined, {
-                maxWait: 0
-            }),
-            quotaClient.requestQuota('bitly', {
-                ipAddress: '192.168.0.2'
-            }, undefined, {
-                maxWait: 0
-            })
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            ),
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            ),
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            ),
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            ),
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            ),
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.2'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            )
         ]);
 
-        shouldThrowOutOfQuota(() => quotaClient.requestQuota('bitly', {
-            ipAddress: '192.168.0.1'
-        }, undefined, {
-            maxWait: 0
-        }));
+        shouldThrowOutOfQuota(() =>
+            quotaClient.requestQuota(
+                'bitly',
+                {
+                    ipAddress: '192.168.0.1'
+                },
+                undefined,
+                {
+                    maxWait: 0
+                }
+            )
+        );
     });
 });

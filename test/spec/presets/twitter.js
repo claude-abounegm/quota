@@ -14,58 +14,94 @@ async function shouldThrowOutOfQuota(fn) {
     }
 }
 
-describe('Preset Twitter', function () {
-    it('should grant quota for individual endpoints and each user', function () {
+describe('Preset Twitter', function() {
+    it('should grant quota for individual endpoints and each user', function() {
         const quotaServer = new quota.Server({
-            'twitter': {
+            twitter: {
                 preset: 'twitter'
             }
         });
 
         const quotaClient = new quota.Client(quotaServer);
         return Promise.all([
-            quotaClient.requestQuota('twitter', {
-                userId: 1
-            }, {
-                'account/settings': 15
-            }, {
-                maxWait: 0
-            }),
-            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
-                userId: 1
-            }, {
-                'account/settings': 15
-            }, {
-                maxWait: 0
-            })),
-            quotaClient.requestQuota('twitter', {
-                userId: 2
-            }, {
-                'account/settings': 15
-            }, {
-                maxWait: 0
-            }),
-            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
-                userId: 2
-            }, {
-                'account/settings': 15
-            }, {
-                maxWait: 0
-            })),
-            quotaClient.requestQuota('twitter', {
-                userId: 1
-            }, {
-                'account/verify_credentials': 15
-            }, {
-                maxWait: 0
-            }),
-            shouldThrowOutOfQuota(() => quotaClient.requestQuota('twitter', {
-                userId: 1
-            }, {
-                'account/verify_credentials': 15
-            }, {
-                maxWait: 0
-            }))
+            quotaClient.requestQuota(
+                'twitter',
+                {
+                    userId: 1
+                },
+                {
+                    'account/settings': 15
+                },
+                {
+                    maxWait: 0
+                }
+            ),
+            shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota(
+                    'twitter',
+                    {
+                        userId: 1
+                    },
+                    {
+                        'account/settings': 15
+                    },
+                    {
+                        maxWait: 0
+                    }
+                )
+            ),
+            quotaClient.requestQuota(
+                'twitter',
+                {
+                    userId: 2
+                },
+                {
+                    'account/settings': 15
+                },
+                {
+                    maxWait: 0
+                }
+            ),
+            shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota(
+                    'twitter',
+                    {
+                        userId: 2
+                    },
+                    {
+                        'account/settings': 15
+                    },
+                    {
+                        maxWait: 0
+                    }
+                )
+            ),
+            quotaClient.requestQuota(
+                'twitter',
+                {
+                    userId: 1
+                },
+                {
+                    'account/verify_credentials': 15
+                },
+                {
+                    maxWait: 0
+                }
+            ),
+            shouldThrowOutOfQuota(() =>
+                quotaClient.requestQuota(
+                    'twitter',
+                    {
+                        userId: 1
+                    },
+                    {
+                        'account/verify_credentials': 15
+                    },
+                    {
+                        maxWait: 0
+                    }
+                )
+            )
         ]);
     });
 });

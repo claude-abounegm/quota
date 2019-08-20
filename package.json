@@ -1,52 +1,55 @@
 {
-  "name": "quota",
-  "version": "0.0.6",
-  "description": "Sophisticated, general-purpose quota management",
-  "keywords": [
-    "quota",
-    "rate",
-    "limit",
-    "limits",
-    "throttling",
-    "queue"
-  ],
-  "homepage": "https://github.com/analog-nico/quota",
-  "bugs": {
-    "url": "https://github.com/analog-nico/quota/issues"
-  },
-  "license": "ISC",
-  "author": "Nicolai Kamenzky (https://github.com/analog-nico)",
-  "maintainers": [
-    "Claude Abounegm (https://github.com/claude-abounegm)"
-  ],
-  "main": "./lib/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/analog-nico/quota.git"
-  },
-  "scripts": {
-    "test-dev": "nyc --reporter=html --reporter=text mocha ./test/dev/**/*.js",
-    "test": "nyc --reporter=html --reporter=text mocha ./test/spec/**/*.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
-  },
-  "dependencies": {
-    "async": "^2.6.2",
-    "double-ended-queue": "^2.1.0-0",
-    "lodash": "^4.17.11",
-    "moment": "^2.24.0",
-    "moment-timezone": "^0.5.23",
-    "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0",
-    "uuid": "^3.3.2"
-  },
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "chalk": "^2.4.2",
-    "coveralls": "^3.0.3",
-    "mocha": "^6.0.2",
-    "nyc": "^13.3.0"
-  }
+    "name": "quota",
+    "version": "0.0.6",
+    "description": "Sophisticated, general-purpose quota management",
+    "keywords": [
+        "quota",
+        "rate",
+        "limit",
+        "limits",
+        "throttling",
+        "queue"
+    ],
+    "homepage": "https://github.com/analog-nico/quota",
+    "bugs": {
+        "url": "https://github.com/analog-nico/quota/issues"
+    },
+    "license": "ISC",
+    "author": "Nicolai Kamenzky (https://github.com/analog-nico)",
+    "maintainers": [
+        "Claude Abounegm (https://github.com/claude-abounegm)"
+    ],
+    "main": "./lib/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/analog-nico/quota.git"
+    },
+    "scripts": {
+        "test": "nyc --reporter=html --reporter=text mocha ./test/spec/**/*.js",
+        "coverage": "nyc report --reporter=text-lcov | coveralls"
+    },
+    "dependencies": {
+        "async": "^3.1.0",
+        "double-ended-queue": "^2.1.0-0",
+        "lodash": "^4.17.15",
+        "moment": "^2.24.0",
+        "moment-timezone": "^0.5.26",
+        "socket.io": "^2.2.0",
+        "socket.io-client": "^2.2.0",
+        "uuid": "^3.3.3"
+    },
+    "engines": {
+        "node": ">=10.0.0"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "chalk": "^2.4.2",
+        "coveralls": "^3.0.3",
+        "eslint": "^6.2.1",
+        "eslint-config-prettier": "^6.1.0",
+        "eslint-plugin-prettier": "^3.1.0",
+        "mocha": "^6.2.0",
+        "nyc": "^14.1.1",
+        "prettier": "^1.18.2"
+    }
 }

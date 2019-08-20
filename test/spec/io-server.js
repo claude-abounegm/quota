@@ -14,9 +14,9 @@ async function shouldThrowNoManager(fn) {
     }
 }
 
-describe('io server', function () {
+describe('io server', function() {
     const data = {};
-    beforeEach(function () {
+    beforeEach(function() {
         const io = require('socket.io')(3030);
         const quotaServer = new quota.Server();
         quotaServer.attachIo(io);
@@ -32,16 +32,13 @@ describe('io server', function () {
         });
     });
 
-    afterEach(function () {
+    afterEach(function() {
         data['io'].close();
         data['quotaClient'].dispose();
     });
 
-    it('should throw when adding manager', async function () {
-        const {
-            ioApi,
-            quotaServer
-        } = data;
+    it('should throw when adding manager', async function() {
+        const { ioApi, quotaServer } = data;
 
         try {
             await ioApi.addManager('google-analytics');
@@ -49,31 +46,37 @@ describe('io server', function () {
         } catch (e) {}
     });
 
-    it('should connect to server and wait 50ms', async function () {
-        const {
-            quotaServer,
-            quotaClient
-        } = data;
+    it('should connect to server and wait 50ms', async function() {
+        const { quotaServer, quotaClient } = data;
 
         const WAIT_TIME = 50;
 
-        quotaServer.addManager('test', new quota.Manager({
-            rules: [{
-                limit: 1,
-                window: WAIT_TIME,
-                throttling: 'window-sliding',
-                queueing: 'fifo'
-            }]
-        }));
+        quotaServer.addManager(
+            'test',
+            new quota.Manager({
+                rules: [
+                    {
+                        limit: 1,
+                        window: WAIT_TIME,
+                        throttling: 'window-sliding',
+                        queueing: 'fifo'
+                    }
+                ]
+            })
+        );
 
         const start = Date.now();
 
         for (let i = 0; i < 2; ++i) {
-            const grant = await quotaClient.requestQuota('test', {
-                viewId: 1234
-            }, {
-                requests: 1
-            });
+            const grant = await quotaClient.requestQuota(
+                'test',
+                {
+                    viewId: 1234
+                },
+                {
+                    requests: 1
+                }
+            );
 
             const diff = Date.now() - start;
             if (i === 1 && diff < WAIT_TIME) {
@@ -83,33 +86,40 @@ describe('io server', function () {
         }
     });
 
-    it('should throw an OutOfQuotaError', async function () {
-        const {
-            quotaServer,
-            quotaClient
-        } = data;
+    it('should throw an OutOfQuotaError', async function() {
+        const { quotaServer, quotaClient } = data;
 
         quotaServer.addManager('ga', {
             preset: 'google-analytics',
             queriesPerSecond: 1
         });
 
-        await quotaClient.requestQuota('ga-core', {
-            viewId: 123
-        }, {
-            requests: 1
-        }, {
-            maxWait: 0
-        });
+        await quotaClient.requestQuota(
+            'ga-core',
+            {
+                viewId: 123
+            },
+            {
+                requests: 1
+            },
+            {
+                maxWait: 0
+            }
+        );
 
         try {
-            await quotaClient.requestQuota('ga-core', {
-                viewId: 123
-            }, {
-                requests: 1
-            }, {
-                maxWait: 0
-            });
+            await quotaClient.requestQuota(
+                'ga-core',
+                {
+                    viewId: 123
+                },
+                {
+                    requests: 1
+                },
+                {
+                    maxWait: 0
+                }
+            );
 
             throw new Error('Expected OutOfQuotaError');
         } catch (e) {
@@ -119,37 +129,34 @@ describe('io server', function () {
         }
     });
 
-    it('should throw a NoManagerError', async function () {
-        const {
-            quotaServer,
-            quotaClient
-        } = data;
+    it('should throw a NoManagerError', async function() {
+        const { quotaServer, quotaClient } = data;
 
-        quotaServer.addManager('test', new quota.Manager({
-            rules: [{
-                limit: 1,
-                throttling: 'limit-absolute'
-            }]
-        }));
+        quotaServer.addManager(
+            'test',
+            new quota.Manager({
+                rules: [
+                    {
+                        limit: 1,
+                        throttling: 'limit-absolute'
+                    }
+                ]
+            })
+        );
 
         await shouldThrowNoManager(() => quotaClient.requestQuota('unknown'));
     });
 
-    it('should be able to connect to io using _request', async function () {
-        const {
-            io,
-            ioApi
-        } = data;
+    it('should be able to connect to io using _request', async function() {
+        const { io, ioApi } = data;
 
-        const {
-            errorToIo
-        } = require('../../lib/common/utils');
+        const { errorToIo } = require('../../lib/common/utils');
 
         const errorMessage = 'quota.testError error';
         io.on('connection', socket => {
             socket.on('quota.testError', cb => {
                 const error = new Error(errorMessage);
-                error.field1 = "field1";
+                error.field1 = 'field1';
                 cb(errorToIo(error));
             });
         });
@@ -162,7 +169,7 @@ describe('io server', function () {
             }
 
             if (e.message !== errorMessage) {
-                throw new Error("e.message !== errorMessage");
+                throw new Error('e.message !== errorMessage');
             }
         }
     });
