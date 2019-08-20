@@ -1,9 +1,9 @@
+/* global describe it */
+
 'use strict';
 
 const _ = require('lodash');
-
 const { expect } = require('chai');
-
 const quota = require('../../../lib');
 
 describe('Queueing Fifo', function() {
@@ -69,7 +69,7 @@ describe('Queueing Fifo', function() {
                     grant2 = grant;
                 });
             })
-            .then(function(firstGrant) {
+            .then(function() {
                 setTimeout(function() {
                     grant1.dismiss();
                 }, 10);
@@ -288,38 +288,28 @@ describe('Queueing Fifo', function() {
 
         const quotaClient = new quota.Client(quotaServer);
 
-        return quotaClient
-            .requestQuota('test', undefined, 2)
-            .then(function(firstGrant) {
-                setImmediate(function() {
-                    firstGrant.dismiss();
-                });
+        return quotaClient.requestQuota('test', undefined, 2).then(grant => {
+            setTimeout(() => {
+                grant.dismiss();
+            }, 0);
 
-                let errors = 0;
-
-                return Promise.all([
-                    quotaClient
-                        .requestQuota('test', undefined, undefined, {
-                            maxWait: 10
-                        })
-                        .catch(e => ++errors),
-                    quotaClient
-                        .requestQuota('test', undefined, undefined, {
-                            maxWait: 10
-                        })
-                        .catch(e => ++errors),
-                    quotaClient
-                        .requestQuota('test', undefined, undefined, {
-                            maxWait: 10
-                        })
-                        .catch(e => ++errors)
-                ]).then(() => {
-                    console.log(errors);
-                    if (errors !== 1) {
-                        throw new Error();
-                    }
-                });
-            });
+            return Promise.all([
+                quotaClient.requestQuota('test', undefined, 1, {
+                    maxWait: 10
+                }),
+                quotaClient.requestQuota('test', undefined, 1, {
+                    maxWait: 10
+                }),
+                quotaClient
+                    .requestQuota('test', undefined, 1, {
+                        maxWait: 10
+                    })
+                    .then(() => {
+                        throw new Error('Expected OutOfQuotaError');
+                    })
+                    .catch(_.noop)
+            ]);
+        });
     });
 
     it('granting second in line after first in line timed out', function() {
@@ -362,7 +352,7 @@ describe('Queueing Fifo', function() {
                         })
                         .catch(function(err) {
                             if (!(err instanceof quota.OutOfQuotaError)) {
-                                throw e;
+                                throw err;
                             }
                         }),
                     quotaClient.requestQuota('test').then(function(grant) {
